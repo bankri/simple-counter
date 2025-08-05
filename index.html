@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Counter with Sound & Animation</title>
+  <style>
+    body {
+      background-color: #f3f4f6;
+      font-family: 'Georgia', serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 5rem;
+      color: #1e3a8a;
+      margin-bottom: 10px;
+      transition: transform 0.2s ease, color 0.3s;
+      text-align: center;
+    }
+
+    .animated {
+      transform: scale(1.2);
+      color: #0ea5e9;
+    }
+
+    button {
+      margin: 0 10px;
+      padding: 12px 24px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    .plus {
+      background-color: #1e3a8a;
+      color: #ffffff;
+    }
+
+    .minus {
+      background-color: #facc15;
+      color: #1e3a8a;
+    }
+
+    .reset {
+      background-color: #ffffff;
+      color: #1e3a8a;
+      border: 2px solid #1e3a8a;
+    }
+
+    .label {
+      font-size: 1.5rem;
+      margin-bottom: 5px;
+      color: #334155;
+    }
+
+    .message {
+      margin-top: 15px;
+      font-weight: bold;
+      color: #dc2626;
+      transition: opacity 0.3s;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React & Babel -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Audio -->
+  <audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3" preload="auto"></audio>
+
+  <!-- JSX Script -->
+  <script type="text/babel">
+    const container = document.getElementById("root");
+    const root = ReactDOM.createRoot(container);
+
+    function Counter() {
+      const [count, setCount] = React.useState(0);
+      const [message, setMessage] = React.useState('');
+      const [isAnimated, setIsAnimated] = React.useState(false);
+
+      const max = 10;
+      const min = -10;
+
+      function playSound() {
+        const audio = document.getElementById("clickSound");
+        audio.currentTime = 0;
+        audio.play();
+      }
+
+      function triggerAnimation() {
+        setIsAnimated(true);
+        setTimeout(() => setIsAnimated(false), 200);
+      }
+
+      function showMessageAndReset(text) {
+        setCount(0);
+        setMessage(text);
+        playSound();
+        triggerAnimation();
+        setTimeout(() => setMessage(''), 2000);
+      }
+
+      function handleIncrement() {
+        if (count + 1 > max) {
+          showMessageAndReset("Maksimum tercapai! Direset ke nol.");
+        } else {
+          setCount(count + 1);
+          setMessage('');
+          playSound();
+          triggerAnimation();
+        }
+      }
+
+      function handleDecrement() {
+        if (count - 1 < min) {
+          showMessageAndReset("Minimum tercapai! Direset ke nol.");
+        } else {
+          setCount(count - 1);
+          setMessage('');
+          playSound();
+          triggerAnimation();
+        }
+      }
+
+      function handleReset() {
+        setCount(0);
+        setMessage('');
+        playSound();
+        triggerAnimation();
+      }
+
+      return (
+        <div>
+          <div className="label">Hasil Perhitungan:</div>
+          <h1 className={isAnimated ? "animated" : ""}>{count}</h1>
+          <div>
+            <button className="minus" onClick={handleDecrement}>−</button>
+            <button className="reset" onClick={handleReset}>Reset</button>
+            <button className="plus" onClick={handleIncrement}>+</button>
+          </div>
+          {message && <div className="message">{message}</div>}
+        </div>
+      );
+    }
+
+    root.render(<Counter />);
+  </script>
+</body>
+</html>
